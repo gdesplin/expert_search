@@ -1,0 +1,18 @@
+.container
+  %h1= Expert.model_name.human.pluralize
+
+  .card
+    .card-body
+      .row
+        - @experts.each do |expert|
+          .col-6
+            .row
+              .col-4= Expert.human_attribute_name(:name)
+              .col-4= Expert.human_attribute_name(:shortened_url)
+              .col-4 Friendships
+
+            .col-6
+              .row
+                .col-4= expert.name
+                .col-4= link_to expert.shortened_url, expert.shortened_url
+                .col-4= expert.experts.size

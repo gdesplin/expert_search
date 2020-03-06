@@ -1,0 +1,30 @@
+.container
+  .card
+    .card-body
+      %h5.card-title= @expert.name
+      = link_to "Edit", [:edit, @expert], class: "btn btn-secondary"
+      .row
+        .col-6
+          .row
+            .col-4= Expert.human_attribute_name(:personal_website_url)
+            .col-4= Expert.human_attribute_name(:shortened_url)
+            .col-4 Friendships
+
+    .row
+      .col-6
+        .col-4= link_to @expert.personal_website_url, @expert.personal_website_url
+        .col-4= link_to @expert.shortened_url, @expert.shortened_url
+        .col-4= @expert.experts&.size
+
+  .card
+    .card-body
+      %h5.card-title= WebsiteHeading.model_name.human.pluralize
+      %ul.list-group.list-group-flush
+        - @expert.website_headings&.each do |heading|
+          %li.list-group-item= heading.heading
+  .card
+    .card-body
+      %h5.card-title Friends
+      %ul.list-group.list-group-flush
+        - @expert.experts&.each do |expert|
+          %li.list-group-item= "#{link_to expert.name, expert}: #{link_to expert.shortened_url, expert.shortened_url}"

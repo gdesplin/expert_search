@@ -1,0 +1,4 @@
+.container
+  %h1= "Edit #{Expert.model_name.human}"
+
+  = render partial: "form", locals: { expert: @expert }
