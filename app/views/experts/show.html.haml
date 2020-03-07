@@ -1,30 +1,38 @@
 .container
   .card
     .card-body
-      %h5.card-title= @expert.name
+      %h5.card-title.d-inline= @expert.name
       = link_to "Edit", [:edit, @expert], class: "btn btn-secondary"
-      .row
-        .col-6
+      
+      %ul.list-group.list-group-flush
+        %li.list-group-item
           .row
-            .col-4= Expert.human_attribute_name(:personal_website_url)
-            .col-4= Expert.human_attribute_name(:shortened_url)
-            .col-4 Friendships
-
-    .row
-      .col-6
-        .col-4= link_to @expert.personal_website_url, @expert.personal_website_url
-        .col-4= link_to @expert.shortened_url, @expert.shortened_url
-        .col-4= @expert.experts&.size
+            .col-6= Expert.human_attribute_name(:personal_website_url)
+            .col-6= link_to @expert.personal_website_url, @expert.personal_website_url
+        %li.list-group-item
+          .row
+            .col-6= Expert.human_attribute_name(:shortened_url)
+            .col-6= link_to @expert.shortened_url, @expert.shortened_url
+        %li.list-group-item
+          .row
+            .col-6 Friendships
+            .col-6= @expert.experts&.size
 
   .card
     .card-body
       %h5.card-title= WebsiteHeading.model_name.human.pluralize
-      %ul.list-group.list-group-flush
-        - @expert.website_headings&.each do |heading|
-          %li.list-group-item= heading.heading
+      - if @expert.website_headings.blank?
+        .alert.alert-info There are no #{ WebsiteHeading.model_name.human.downcase.pluralize } to display.
+      - else
+        %ul.list-group.list-group-flush
+          - @expert.website_headings.each do |heading|
+            %li.list-group-item= heading.heading
   .card
     .card-body
       %h5.card-title Friends
       %ul.list-group.list-group-flush
-        - @expert.experts&.each do |expert|
-          %li.list-group-item= "#{link_to expert.name, expert}: #{link_to expert.shortened_url, expert.shortened_url}"
+        - if @expert.experts.blank?
+          .alert.alert-info There are no friends to display.
+        - else
+          - @expert.experts&.each do |expert|
+            %li.list-group-item= "#{link_to expert.name, expert}: #{link_to expert.shortened_url, expert.shortened_url}"

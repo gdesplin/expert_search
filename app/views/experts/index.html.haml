@@ -3,16 +3,14 @@
 
   .card
     .card-body
-      .row
-        - @experts.each do |expert|
-          .col-6
-            .row
-              .col-4= Expert.human_attribute_name(:name)
-              .col-4= Expert.human_attribute_name(:shortened_url)
-              .col-4 Friendships
-
-            .col-6
-              .row
-                .col-4= expert.name
-                .col-4= link_to expert.shortened_url, expert.shortened_url
-                .col-4= expert.experts.size
+      %table.table
+        %thead
+          %th{ scope: "col" }= Expert.human_attribute_name(:name)
+          %th{ scope: "col" }= Expert.human_attribute_name(:shortened_url)
+          %th{ scope: "col" } Friendships
+        %tbody
+          - @experts.each do |expert|
+            %tr
+              %th= link_to expert.name, expert
+              %td= link_to expert.shortened_url, expert.shortened_url
+              %td= expert.experts.size
