@@ -1,9 +1,19 @@
-= form_with model: @expert do |f|
+= form_with model: @expert, data: { controller: "experts" } do |f|
+  = hidden_field_tag :expert_id, f.object.id, data: { target: "experts.expertId" }
   .form-group
     = f.label :name
     = f.text_field :name, class: "form-control"
   .form-group
     = f.label :personal_website_url
     = f.text_field :personal_website_url, class: "form-control", max_length: 255
+  .form-group
+    = f.label :friends
+    %input{ data: { target: "experts.searchTerm", action: "keyup->experts#searchToAdd" } }
+
+    %ul{ data: { target: "experts.searchResults" } }
+
+    %label Added Friends
+    %ul{ data: { target: "experts.friendsList" } }
+
   .form-group
     = f.submit class: "btn btn-primary"

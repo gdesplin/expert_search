@@ -1,7 +1,11 @@
 class ExpertsController < ApplicationController
 
   def index
-    @experts = Expert.all
+    @experts = Expert.search(search_params)
+    respond_to do |format|
+      format.html
+      format.json { render json: @experts }
+     end
   end
 
   def show
@@ -27,9 +31,17 @@ class ExpertsController < ApplicationController
     end
   end
 
+  def add_friend
+    expert = Expert.find(params[:id])
+    friend = Expert.find(add_friend_params[:friend_id])
+    expert.friends << friend
+    expert.save
+    render json: friend
+  end
+
   def update
     @expert = Expert.find(params[:id])
-    if @expert.updatew(safe_params)
+    if @expert.update(safe_params)
       flash.notice = "Expert updated."
       redirect_to @expert
     else
@@ -42,6 +54,14 @@ class ExpertsController < ApplicationController
 
   def safe_params
     params.require(:expert).permit(%i[name personal_website_url])
+  end
+
+  def search_params
+    params.permit(%i[term field])
+  end
+
+  def add_friend_params
+    params.permit(:friend_id)
   end
 
 

@@ -16,7 +16,7 @@
         %li.list-group-item
           .row
             .col-6 Friendships
-            .col-6= @expert.experts&.size
+            .col-6= @expert.friends&.size
 
   .card
     .card-body
@@ -31,8 +31,8 @@
     .card-body
       %h5.card-title Friends
       %ul.list-group.list-group-flush
-        - if @expert.experts.blank?
+        - if @expert.friends.blank?
           .alert.alert-info There are no friends to display.
         - else
-          - @expert.experts&.each do |expert|
-            %li.list-group-item= "#{link_to expert.name, expert}: #{link_to expert.shortened_url, expert.shortened_url}"
+          - @expert.friends&.each do |friend|
+            %li.list-group-item!= "#{link_to friend.name, friend}: #{link_to friend.shortened_url, friend.shortened_url}"
