@@ -3,9 +3,9 @@
 one:
   name: 
   personal_website_url: MyString
-  shortened_url: MyString
+  short_url: MyString
 
 two:
   name: 
   personal_website_url: MyString
-  shortened_url: MyString
+  short_url: MyString

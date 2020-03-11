@@ -6,14 +6,19 @@
   .form-group
     = f.label :personal_website_url
     = f.text_field :personal_website_url, class: "form-control", max_length: 255
-  .form-group
-    = f.label :friends
-    %input{ data: { target: "experts.searchTerm", action: "keyup->experts#searchToAdd" } }
+  - if @expert.persisted?
+    .form-group
+      = f.label :friends
+      %input{ data: { target: "experts.searchTerm", action: "keyup->experts#searchToAdd" } }
 
-    %ul{ data: { target: "experts.searchResults" } }
+      %ul.list-group{ data: { target: "experts.searchResults" } }
 
-    %label Added Friends
-    %ul{ data: { target: "experts.friendsList" } }
+      %label Added Friends
+      %ul.list-group
+        - @expert.friends.each do |friend|
+          %li.list-group-item= friend.name
+
+      %ul.list-group{ data: { target: "experts.friendsList" } }
 
   .form-group
     = f.submit class: "btn btn-primary"

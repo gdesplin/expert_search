@@ -11,16 +11,33 @@ class Expert < ApplicationRecord
   has_many :website_headings
 
   def self.search(search_params)
-    term = "%#{search_params[:term]}%"
-    field = search_params[:field]
     query = all
-    case field
-    when %w[name personal_website_url shortened_url].include?(field)
-      query = query.where("? LIKE ?", search_params[:field], term)
-    when "website headings"
-      query = query.joins.website_headings.where("website_headings.heading LIKE ?", term)
+    if column_names.include?(search_params[:field])
+      term = "%#{search_params[:term].downcase}%"
+      field = search_params[:field] 
+      case field
+      when "name", "personal_website_url", "short_url"
+        query = query.where("lower(#{field}) LIKE ?", term)
+      when "website headings"
+        query = query.joins.website_headings.where("website_headings.heading LIKE ?", term)
+      end
     end
     query
+  end
+
+  def friend_search(search_params)
+    if Expert.column_names.include?(search_params[:field])
+      term = "%#{search_params[:term].downcase}%"
+      field = search_params[:field] 
+      query = Expert.all
+      case field
+      when "name", "personal_website_url", "short_url"
+        query = query.where("lower(#{field}) LIKE ?", term)
+      when "website headings"
+        query = query.joins.website_headings.where("website_headings.heading LIKE ?", term)
+      end
+      query.where.not(id: friends.pluck(:id).push(id))
+    end
   end
 
 end

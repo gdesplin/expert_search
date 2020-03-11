@@ -2,10 +2,12 @@ class ExpertsController < ApplicationController
 
   def index
     @experts = Expert.search(search_params)
-    respond_to do |format|
-      format.html
-      format.json { render json: @experts }
-     end
+  end
+
+  def friend_search
+    @expert = Expert.find(params[:id])
+    @experts = @expert.friend_search(search_params)
+    render json: @experts.limit(10)
   end
 
   def show

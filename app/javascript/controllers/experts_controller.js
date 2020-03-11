@@ -2,29 +2,28 @@ import { Controller } from "stimulus"
 var authenticity_token = $('[name="csrf-token"]')[0].content
 
 export default class extends Controller {
-  static targets = ["searchTerm", "searchField", "searchResults", "friend", "friends", "expertId"]
+  static targets = ["searchTerm", "searchField", "searchResults", "friendsList", "friend", "foundFriends", "addedFriends", "expertId"]
 
   connect() {
-    console.log("Hello, Stimulus!", this.element)
-    console.log(authenticity_token)
+    self = this
+    console.log("Hello, Stimulus!", self.element)
+    self.targets.addedFriends = []
+    self.targets.foundFriends = []
   }
 
   searchToAdd() {
-    this.searchResultsTarget.innerHTML =`<li>Loading</li>`
-    fetch(`/experts.json?term=${this.searchTermTarget.value}&field=name`)
+    self.searchResultsTarget.innerHTML = `<div class="alert alert-info">Loading...</div>`
+    fetch(`/experts/${self.expertIdTarget.value}/friend_search?term=${self.searchTermTarget.value}&field=name`)
     .then(response => response.json())
     .then(json => {
-      let searchResultsHtml = ""
-      json.forEach((friend) => {
-        searchResultsHtml += searchFriendTemplate(friend)
-      })
-      this.searchResultsTarget.innerHTML = searchResultsHtml;
+      self.targets.foundFriends = json
+      self.updateFoundFriendList()
     })
   }
 
   addFriend() {
     const friend_id = event.currentTarget.getAttribute("value")
-    fetch(`/experts/${this.expertIdTarget.value}/add_friend`, {
+    fetch(`/experts/${self.expertIdTarget.value}/add_friend`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -32,18 +31,48 @@ export default class extends Controller {
       body: JSON.stringify({friend_id: friend_id, authenticity_token: authenticity_token}),
     })
     .then((response) => response.json())
-    .then((data) => {
-      console.log('Success:', data);
-      addFriendTemplate(data)
+    .then((json) => {
+      addFriendTemplate(json)
+      self.targets.foundFriends = self.targets.foundFriends.filter(function( friend ) {
+        return friend.id !== json.id;
+      });
+      self.targets.addedFriends.push(json)
+      self.updateFoundFriendList()
+      self.updateAddedFriendList()
     })
   }
+
+  updateFoundFriendList() {
+    if (!self.targets.foundFriends.length) {
+      self.searchResultsTarget.innerHTML = `<div class="alert alert-info">None Found</div>`
+      return
+    }
+    let foundFriendHtml = ""
+    self.targets.foundFriends.forEach((friend) => {
+      foundFriendHtml += searchFriendTemplate(friend)
+    })
+    self.searchResultsTarget.innerHTML = foundFriendHtml;
+  }
+
+  updateAddedFriendList() {
+    if (!self.targets.addedFriends.length) {
+      return
+    }
+    let addedFriendHtml = ""
+    self.targets.addedFriends.forEach((friend) => {
+      addedFriendHtml += addFriendTemplate(friend)
+    })
+    self.friendsListTarget.innerHTML = addedFriendHtml;
+  }
 }
+
+
 
 function searchFriendTemplate(friend) {
   console.log(friend.name)
   return `
     <li class="list-group-item">
-      <a class="btn btn-secondary" data-target="experts.friend" data-action="click->experts#addFriend" value="${friend.id}">Add ${friend.name}</a>
+      <a class="btn btn-secondary btn-sm text-light" data-target="experts.friend" data-action="click->experts#addFriend" value="${friend.id}">Add ${friend.name}</a>
     </li>
   `
 }
