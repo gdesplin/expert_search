@@ -6,11 +6,11 @@
       %table.table
         %thead
           %th{ scope: "col" }= Expert.human_attribute_name(:name)
-          %th{ scope: "col" }= Expert.human_attribute_name(:short_url)
+          %th{ scope: "col" }= Expert.human_attribute_name(:shortened_url)
           %th{ scope: "col" } Friendships
         %tbody
           - @experts.each do |expert|
             %tr
               %th= link_to expert.name, expert
-              %td= link_to expert.short_url, expert.short_url
+              %td= link_to expert.shortened_url, expert.shortened_url
               %td= expert.friends.size

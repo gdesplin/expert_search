@@ -11,8 +11,8 @@
             .col-6= link_to @expert.personal_website_url, @expert.personal_website_url
         %li.list-group-item
           .row
-            .col-6= Expert.human_attribute_name(:short_url)
-            .col-6= link_to @expert.short_url, @expert.short_url
+            .col-6= Expert.human_attribute_name(:shortened_url)
+            .col-6= link_to @expert.shortened_url, @expert.shortened_url
         %li.list-group-item
           .row
             .col-6 Friendships
@@ -35,4 +35,4 @@
           .alert.alert-info There are no friends to display.
         - else
           - @expert.friends&.each do |friend|
-            %li.list-group-item!= "#{link_to friend.name, friend}: #{link_to friend.short_url, friend.short_url}"
+            %li.list-group-item!= "#{link_to friend.name, friend}: #{link_to friend.shortened_url, friend.shortened_url}"
